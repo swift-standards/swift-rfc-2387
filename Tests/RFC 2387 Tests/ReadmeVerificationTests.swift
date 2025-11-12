@@ -129,11 +129,11 @@ struct ReadmeVerificationTests {
     @Test("Multiple inline images in multipart/related")
     func exampleMultipleInlineImages() throws {
         let htmlContent = """
-        <html>
-            <img src="cid:logo@example.com">
-            <img src="cid:banner@example.com">
-        </html>
-        """
+            <html>
+                <img src="cid:logo@example.com">
+                <img src="cid:banner@example.com">
+            </html>
+            """
         let htmlPart = RFC_2046.BodyPart(
             contentType: .textHTMLUTF8,
             text: htmlContent
