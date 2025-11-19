@@ -4,11 +4,11 @@ import Testing
 
 @testable import RFC_2387
 
-@Suite("README Verification")
-struct ReadmeVerificationTests {
+@Suite
+struct `README Verification` {
 
-    @Test("Example from source: Creating multipart/related with HTML and inline image")
-    func exampleMultipartRelatedWithInlineImage() throws {
+    @Test
+    func `Example from source: Creating multipart/related with HTML and inline image`() throws {
         // From Multipart+Related.swift line 85-99
         let htmlContent = "<img src='cid:logo@example.com'>"
         let htmlPart = RFC_2046.BodyPart(
@@ -32,8 +32,8 @@ struct ReadmeVerificationTests {
         #expect(related.parts.count == 2)
     }
 
-    @Test("Example from source: Using inlineImage convenience initializer")
-    func exampleInlineImageConvenience() {
+    @Test
+    func `Example from source: Using inlineImage convenience initializer`() {
         // From Multipart+Related.swift line 36-43
         let imageData = Data([0xFF, 0xD8, 0xFF, 0xE0])  // JPEG magic bytes
         let imagePart = RFC_2046.BodyPart.inlineImage(
@@ -48,15 +48,15 @@ struct ReadmeVerificationTests {
         #expect(imagePart.contentType?.subtype == "png")
     }
 
-    @Test("Example from source: Related subtype constant")
-    func exampleRelatedSubtype() {
+    @Test
+    func `Example from source: Related subtype constant`() {
         // From Multipart+Related.swift line 24
         let related = RFC_2046.Multipart.Subtype.related
         #expect(related.rawValue == "related")
     }
 
-    @Test("Example from source: ContentID accessor")
-    func exampleContentIDAccessor() {
+    @Test
+    func `Example from source: ContentID accessor`() {
         // From Multipart+Related.swift line 69-71
         let imagePart = RFC_2046.BodyPart.inlineImage(
             contentID: "test@example.com",
@@ -68,8 +68,8 @@ struct ReadmeVerificationTests {
         #expect(contentID == "<test@example.com>")
     }
 
-    @Test("Multipart/related with root type parameter")
-    func exampleWithRootType() throws {
+    @Test
+    func `Multipart/related with root type parameter`() throws {
         let htmlPart = RFC_2046.BodyPart(
             contentType: .textHTMLUTF8,
             text: "<p>Test</p>"
@@ -91,8 +91,8 @@ struct ReadmeVerificationTests {
         #expect(related.parts.count == 2)
     }
 
-    @Test("Multipart/related with start Content-ID parameter")
-    func exampleWithStartContentID() throws {
+    @Test
+    func `Multipart/related with start Content-ID parameter`() throws {
         let htmlPart = RFC_2046.BodyPart(
             contentType: .textHTMLUTF8,
             text: "<html><body>Test</body></html>"
@@ -108,8 +108,8 @@ struct ReadmeVerificationTests {
         #expect(related.parts.count == 1)
     }
 
-    @Test("Multipart/related with custom boundary")
-    func exampleWithCustomBoundary() throws {
+    @Test
+    func `Multipart/related with custom boundary`() throws {
         let htmlPart = RFC_2046.BodyPart(
             contentType: .textHTMLUTF8,
             text: "<p>Content</p>"
@@ -125,8 +125,8 @@ struct ReadmeVerificationTests {
         #expect(related.boundary == customBoundary)
     }
 
-    @Test("Multiple inline images in multipart/related")
-    func exampleMultipleInlineImages() throws {
+    @Test
+    func `Multiple inline images in multipart/related`() throws {
         let htmlContent = """
             <html>
                 <img src="cid:logo@example.com">
