@@ -104,7 +104,7 @@ extension RFC_2046.Multipart {
     ///   - rootType: Content-Type of root part (optional, auto-detected from rootPart)
     ///   - startContentID: Content-ID of root part (optional, per RFC 2387)
     ///   - boundary: Custom boundary (auto-generated if nil)
-    /// - Throws: `RFC_2046.MultipartError` if validation fails
+    /// - Throws: `RFC_2046.Multipart.Error` if validation fails
     public static func related(
         rootPart: RFC_2046.BodyPart,
         relatedParts: [RFC_2046.BodyPart],
