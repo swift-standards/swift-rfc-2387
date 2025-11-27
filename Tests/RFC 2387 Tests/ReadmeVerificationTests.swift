@@ -1,31 +1,44 @@
+// ===----------------------------------------------------------------------===//
+//
+// This source file is part of the swift-rfc-2387 open source project
+//
+// Copyright (c) 2025 Coen ten Thije Boonkkamp
+// Licensed under Apache License v2.0
+//
+// See LICENSE.txt for license information
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+// ===----------------------------------------------------------------------===//
+
+import Foundation
 import RFC_2045
 import RFC_2046
+import RFC_5322
 import Testing
 
 @testable import RFC_2387
 
 @Suite
-struct `README Verification` {
+struct `RFC 2387 Related Tests` {
+
+    // MARK: - Basic Creation
 
     @Test
-    func `Example from source: Creating multipart/related with HTML and inline image`() throws {
-        // From Multipart+Related.swift line 85-99
-        let htmlContent = "<img src='cid:logo@example.com'>"
-        let htmlPart = RFC_2046.BodyPart(
-            contentType: .textHTMLUTF8,
-            text: htmlContent
-        )
+    func `Creating multipart/related with HTML and inline image`() throws {
+        let htmlPart = try RFC_2046.BodyPart(contentType: .textHTMLUTF8, text: "<img src='cid:logo@example.com'>")
 
-        let imageData = Data([0x89, 0x50, 0x4E, 0x47])  // PNG magic bytes
-        let imagePart = RFC_2046.BodyPart.inlineImage(
+        let imagePart = try RFC_2387.Related.inline(
             contentID: "logo@example.com",
-            contentType: RFC_2045.ContentType(type: "image", subtype: "png"),
-            content: imageData
+            contentType: .imagePNG,
+            content: [.ascii.P, .ascii.N, .ascii.G]
         )
 
-        let related = try RFC_2046.Multipart.related(
+        let boundary = try RFC_2046.Boundary("----=_Part_\(UUID().uuidString)")
+        let related = try RFC_2387.Related.multipart(
             rootPart: htmlPart,
-            relatedParts: [imagePart]
+            relatedParts: [imagePart],
+            boundary: boundary
         )
 
         #expect(related.subtype == .related)
@@ -33,13 +46,11 @@ struct `README Verification` {
     }
 
     @Test
-    func `Example from source: Using inlineImage convenience initializer`() {
-        // From Multipart+Related.swift line 36-43
-        let imageData = Data([0xFF, 0xD8, 0xFF, 0xE0])  // JPEG magic bytes
-        let imagePart = RFC_2046.BodyPart.inlineImage(
+    func `Using inline convenience method`() throws {
+        let imagePart = try RFC_2387.Related.inline(
             contentID: "logo@example.com",
-            contentType: RFC_2045.ContentType(type: "image", subtype: "png"),
-            content: imageData
+            contentType: .imagePNG,
+            content: [.ascii.J, .ascii.P, .ascii.G]
         )
 
         // Reference in HTML: <img src="cid:logo@example.com">
@@ -49,41 +60,40 @@ struct `README Verification` {
     }
 
     @Test
-    func `Example from source: Related subtype constant`() {
-        // From Multipart+Related.swift line 24
+    func `Related subtype constant`() {
         let related = RFC_2046.Multipart.Subtype.related
         #expect(related.rawValue == "related")
     }
 
     @Test
-    func `Example from source: ContentID accessor`() {
-        // From Multipart+Related.swift line 69-71
-        let imagePart = RFC_2046.BodyPart.inlineImage(
+    func `ContentID accessor`() throws {
+        let imagePart = try RFC_2387.Related.inline(
             contentID: "test@example.com",
-            contentType: RFC_2045.ContentType(type: "image", subtype: "gif"),
-            content: Data()
+            contentType: .imageGIF,
+            content: []
         )
 
         let contentID = imagePart.contentID
         #expect(contentID == "<test@example.com>")
     }
 
+    // MARK: - Parameters
+
     @Test
     func `Multipart/related with root type parameter`() throws {
-        let htmlPart = RFC_2046.BodyPart(
-            contentType: .textHTMLUTF8,
-            text: "<p>Test</p>"
-        )
+        let htmlPart = try RFC_2046.BodyPart(contentType: .textHTMLUTF8, text: "<p>Test</p>")
 
-        let imagePart = RFC_2046.BodyPart.inlineImage(
+        let imagePart = try RFC_2387.Related.inline(
             contentID: "img@example.com",
-            contentType: RFC_2045.ContentType(type: "image", subtype: "jpeg"),
-            content: Data()
+            contentType: .imageJPEG,
+            content: []
         )
 
-        let related = try RFC_2046.Multipart.related(
+        let boundary = try RFC_2046.Boundary("----=_Part_\(UUID().uuidString)")
+        let related = try RFC_2387.Related.multipart(
             rootPart: htmlPart,
             relatedParts: [imagePart],
+            boundary: boundary,
             rootType: .textHTMLUTF8
         )
 
@@ -93,15 +103,14 @@ struct `README Verification` {
 
     @Test
     func `Multipart/related with start Content-ID parameter`() throws {
-        let htmlPart = RFC_2046.BodyPart(
-            contentType: .textHTMLUTF8,
-            text: "<html><body>Test</body></html>"
-        )
+        let htmlPart = try RFC_2046.BodyPart(contentType: .textHTMLUTF8, text: "<html><body>Test</body></html>")
 
-        let related = try RFC_2046.Multipart.related(
+        let boundary = try RFC_2046.Boundary("----=_Part_\(UUID().uuidString)")
+        let related = try RFC_2387.Related.multipart(
             rootPart: htmlPart,
             relatedParts: [],
-            startContentID: "root@example.com"
+            boundary: boundary,
+            start: "root@example.com"
         )
 
         #expect(related.subtype == .related)
@@ -110,20 +119,19 @@ struct `README Verification` {
 
     @Test
     func `Multipart/related with custom boundary`() throws {
-        let htmlPart = RFC_2046.BodyPart(
-            contentType: .textHTMLUTF8,
-            text: "<p>Content</p>"
-        )
+        let htmlPart = try RFC_2046.BodyPart(contentType: .textHTMLUTF8, text: "<p>Content</p>")
 
-        let customBoundary = "CustomBoundary123"
-        let related = try RFC_2046.Multipart.related(
+        let customBoundary = try RFC_2046.Boundary("CustomBoundary123")
+        let related = try RFC_2387.Related.multipart(
             rootPart: htmlPart,
             relatedParts: [],
             boundary: customBoundary
         )
 
-        #expect(related.boundary == customBoundary)
+        #expect(String(related.boundary) == "CustomBoundary123")
     }
+
+    // MARK: - Multiple Parts
 
     @Test
     func `Multiple inline images in multipart/related`() throws {
@@ -133,30 +141,92 @@ struct `README Verification` {
                 <img src="cid:banner@example.com">
             </html>
             """
-        let htmlPart = RFC_2046.BodyPart(
-            contentType: .textHTMLUTF8,
-            text: htmlContent
-        )
+        let htmlPart = try RFC_2046.BodyPart(contentType: .textHTMLUTF8, text: htmlContent)
 
-        let logoPart = RFC_2046.BodyPart.inlineImage(
+        let logoPart = try RFC_2387.Related.inline(
             contentID: "logo@example.com",
-            contentType: RFC_2045.ContentType(type: "image", subtype: "png"),
-            content: Data([0x89, 0x50, 0x4E, 0x47])
+            contentType: .imagePNG,
+            content: [.ascii.l, .ascii.o, .ascii.g, .ascii.o]
         )
 
-        let bannerPart = RFC_2046.BodyPart.inlineImage(
+        let bannerPart = try RFC_2387.Related.inline(
             contentID: "banner@example.com",
-            contentType: RFC_2045.ContentType(type: "image", subtype: "jpeg"),
-            content: Data([0xFF, 0xD8, 0xFF, 0xE0])
+            contentType: .imageJPEG,
+            content: [.ascii.b, .ascii.a, .ascii.n, .ascii.n, .ascii.e, .ascii.r]
         )
 
-        let related = try RFC_2046.Multipart.related(
+        let boundary = try RFC_2046.Boundary("----=_Part_\(UUID().uuidString)")
+        let related = try RFC_2387.Related.multipart(
             rootPart: htmlPart,
-            relatedParts: [logoPart, bannerPart]
+            relatedParts: [logoPart, bannerPart],
+            boundary: boundary
         )
 
         #expect(related.parts.count == 3)
         #expect(related.parts[1].contentID == "<logo@example.com>")
         #expect(related.parts[2].contentID == "<banner@example.com>")
+    }
+
+    // MARK: - Namespace Tests
+
+    @Test
+    func `RFC_2387 namespace exists`() {
+        // Verify the namespace enum exists and can be referenced
+        _ = RFC_2387.self
+    }
+
+    @Test
+    func `RFC_2387.Related type exists`() {
+        // Verify the Related struct exists
+        _ = RFC_2387.Related.self
+    }
+
+    // MARK: - Related struct tests
+
+    @Test
+    func `Creating Related struct directly`() throws {
+        let htmlPart = try RFC_2046.BodyPart(contentType: .textHTMLUTF8, text: "<p>Test</p>")
+
+        let boundary = try RFC_2046.Boundary("----=_Part_\(UUID().uuidString)")
+        let related = try RFC_2387.Related(
+            rootPart: htmlPart,
+            relatedParts: [],
+            boundary: boundary
+        )
+
+        #expect(related.rootType.type == "text")
+        #expect(related.rootType.subtype == "html")
+        #expect(related.parts.count == 1)
+    }
+
+    @Test
+    func `Related struct serialization round-trip`() throws {
+        let htmlPart = try RFC_2046.BodyPart(contentType: .textHTMLUTF8, text: "<p>Hello</p>")
+
+        let boundary = try RFC_2046.Boundary("----=_Test_Boundary")
+        let related = try RFC_2387.Related(
+            rootPart: htmlPart,
+            relatedParts: [],
+            boundary: boundary
+        )
+
+        // Serialize to bytes
+        let bytes = [UInt8](related)
+
+        // Should contain the boundary
+        let serialized = String(decoding: bytes, as: UTF8.self)
+        #expect(serialized.contains("----=_Test_Boundary"))
+    }
+
+    // MARK: - Type Safety Tests
+
+    @Test
+    func `ContentID type is RFC_5322.Message.ID`() throws {
+        // Verify ContentID is properly typed
+        let contentID: RFC_2387.ContentID = "test@example.com"
+
+        // Should serialize with angle brackets
+        let serialized = String(contentID)
+        #expect(serialized == "<test@example.com>")
     }
 }

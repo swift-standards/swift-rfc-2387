@@ -18,27 +18,36 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swift-standards/swift-rfc-2045", from: "0.1.0"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2046", from: "0.1.0")
+        .package(url: "https://github.com/swift-standards/swift-rfc-2046", from: "0.1.0"),
+        .package(url: "https://github.com/swift-standards/swift-rfc-5322", from: "0.1.0")
     ],
     targets: [
         .target(
             name: "RFC 2387",
             dependencies: [
                 .product(name: "RFC 2045", package: "swift-rfc-2045"),
-                .product(name: "RFC 2046", package: "swift-rfc-2046")
+                .product(name: "RFC 2046", package: "swift-rfc-2046"),
+                .product(name: "RFC 5322", package: "swift-rfc-5322")
             ]
         ),
         .testTarget(
-            name: "RFC 2387 Tests",
+            name: "RFC 2387".tests,
             dependencies: ["RFC 2387"]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )
 
-for target in package.targets {
-    target.swiftSettings?.append(
-        contentsOf: [
-            .enableUpcomingFeature("MemberImportVisibility")
-        ]
-    )
+extension String {
+    var tests: Self { self + " Tests" }
+    var foundation: Self { self + " Foundation" }
+}
+
+for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
+    let existing = target.swiftSettings ?? []
+    target.swiftSettings = existing + [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility")
+    ]
 }
