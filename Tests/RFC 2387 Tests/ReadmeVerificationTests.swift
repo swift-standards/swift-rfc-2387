@@ -26,7 +26,10 @@ struct `RFC 2387 Related Tests` {
 
     @Test
     func `Creating multipart/related with HTML and inline image`() throws {
-        let htmlPart = try RFC_2046.BodyPart(contentType: .textHTMLUTF8, text: "<img src='cid:logo@example.com'>")
+        let htmlPart = try RFC_2046.BodyPart(
+            contentType: .textHTMLUTF8,
+            text: "<img src='cid:logo@example.com'>"
+        )
 
         let imagePart = try RFC_2387.Related.inline(
             contentID: "logo@example.com",
@@ -103,7 +106,10 @@ struct `RFC 2387 Related Tests` {
 
     @Test
     func `Multipart/related with start Content-ID parameter`() throws {
-        let htmlPart = try RFC_2046.BodyPart(contentType: .textHTMLUTF8, text: "<html><body>Test</body></html>")
+        let htmlPart = try RFC_2046.BodyPart(
+            contentType: .textHTMLUTF8,
+            text: "<html><body>Test</body></html>"
+        )
 
         let boundary = try RFC_2046.Boundary("----=_Part_\(UUID().uuidString)")
         let related = try RFC_2387.Related.multipart(

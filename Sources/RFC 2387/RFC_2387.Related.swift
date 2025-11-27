@@ -11,11 +11,10 @@
 //
 // ===----------------------------------------------------------------------===//
 
+import INCITS_4_1986
 public import RFC_2045
 public import RFC_2046
 public import RFC_5322
-
-import INCITS_4_1986
 
 extension RFC_2387 {
     /// RFC 2387 multipart/related message
@@ -144,7 +143,6 @@ extension RFC_2387 {
         }
     }
 }
-
 
 // MARK: - BodyPart Extensions
 
