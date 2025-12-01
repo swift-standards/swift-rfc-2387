@@ -284,8 +284,13 @@ extension RFC_2387.Related: UInt8.ASCII.Serializable {
     /// Serialize to canonical ASCII byte representation
     ///
     /// Serialization delegates to the underlying RFC_2046.Multipart.
-    public static let serialize: @Sendable (Self) -> [UInt8] = [UInt8].init
-
+    static public func serialize<Buffer>(
+        ascii related: RFC_2387.Related,
+        into buffer: inout Buffer
+    ) where Buffer : RangeReplaceableCollection, Buffer.Element == UInt8 {
+        buffer.append(related.multipart)
+    }
+    
     /// Parsing context for multipart/related messages
     ///
     /// Multipart/related parsing requires the boundary delimiter.

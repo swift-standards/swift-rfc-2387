@@ -13,9 +13,10 @@
 
 /// Re-export dependencies for downstream convenience
 ///
-/// Following the standard pattern, RFC 2387 re-exports RFC 2045 and RFC 2046
+/// Following the standard pattern, RFC 2387 re-exports its dependencies
 /// so that consumers get access to MIME types without additional imports.
 
+@_exported public import INCITS_4_1986
 @_exported public import RFC_2045
 @_exported public import RFC_2046
 @_exported public import RFC_5322
