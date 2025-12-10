@@ -278,19 +278,18 @@ extension RFC_2045.Parameter.Name {
     public static let startInfo = RFC_2045.Parameter.Name(rawValue: "start-info")
 }
 
-// MARK: - UInt8.ASCII.Serializable
+// MARK: - Binary.ASCII.Serializable
 
-extension RFC_2387.Related: UInt8.ASCII.Serializable {
+extension RFC_2387.Related: Binary.ASCII.Serializable {
     /// Serialize to canonical ASCII byte representation
     ///
     /// Serialization delegates to the underlying RFC_2046.Multipart.
     static public func serialize<Buffer>(
         ascii related: RFC_2387.Related,
         into buffer: inout Buffer
-    ) where Buffer : RangeReplaceableCollection, Buffer.Element == UInt8 {
+    ) where Buffer: RangeReplaceableCollection, Buffer.Element == UInt8 {
         buffer.append(related.multipart)
     }
-    
     /// Parsing context for multipart/related messages
     ///
     /// Multipart/related parsing requires the boundary delimiter.
