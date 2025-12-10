@@ -17,10 +17,10 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.6.2"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2045", from: "0.3.2"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2046", from: "0.3.2"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-5322", from: "0.7.0")
+        .package(url: "https://github.com/swift-standards/swift-incits-4-1986", from: "0.6.3"),
+        .package(url: "https://github.com/swift-standards/swift-rfc-2045", from: "0.3.3"),
+        .package(url: "https://github.com/swift-standards/swift-rfc-2046", from: "0.3.3"),
+        .package(url: "https://github.com/swift-standards/swift-rfc-5322", from: "0.7.1")
     ],
     targets: [
         .target(
