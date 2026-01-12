@@ -11,7 +11,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-import INCITS_4_1986
+import ASCII
 public import RFC_2045
 public import RFC_2046
 public import RFC_5322
