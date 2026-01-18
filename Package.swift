@@ -17,10 +17,10 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-foundations/swift-ascii.git", from: "0.0.1"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2045.git", from: "0.0.1"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-2046.git", from: "0.0.1"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-5322.git", from: "0.0.1")
+        .package(path: "../../swift-foundations/swift-ascii"),
+        .package(path: "../swift-rfc-2045"),
+        .package(path: "../swift-rfc-2046"),
+        .package(path: "../swift-rfc-5322")
     ],
     targets: [
         .target(
