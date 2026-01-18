@@ -30,11 +30,7 @@ let package = Package(
                 .product(name: "RFC 2045", package: "swift-rfc-2045"),
                 .product(name: "RFC 2046", package: "swift-rfc-2046"),
                 .product(name: "RFC 5322", package: "swift-rfc-5322")
-            ]
-        ),
-        .testTarget(
-            name: "RFC 2387".tests,
-            dependencies: ["RFC 2387"]
+    ]
         )
     ],
     swiftLanguageModes: [.v6]
