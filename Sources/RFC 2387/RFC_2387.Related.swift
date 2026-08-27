@@ -1,4 +1,4 @@
-import ASCII_Serializer_Primitives
+import ASCII_Serializer
 public import RFC_2045
 public import RFC_2046
 public import RFC_5322

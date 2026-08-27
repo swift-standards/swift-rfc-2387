@@ -1,10 +1,10 @@
-public import Byte_Parser_Primitives
-public import Parser_Primitives
+public import Byte_Parser
+public import Parser
 public import RFC_2046
 
 extension RFC_2387.Related {
 
-    public struct Parser: Parser_Primitives.Parser.`Protocol`, Sendable {
+    public struct Parser: Parser.Parser.`Protocol`, Sendable {
 
         public let boundary: RFC_2046.Boundary
 
