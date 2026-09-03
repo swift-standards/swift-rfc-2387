@@ -17,6 +17,8 @@ let package = Package(
         )
     ],
     dependencies: [
+        .package(url: "https://github.com/swift-atoms/swift-byte.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-cursor.git", branch: "main"),
         .package(
             url: "https://github.com/swift-molecules/swift-ascii-serializer.git",
             branch: "main"
@@ -51,17 +53,12 @@ let package = Package(
         .testTarget(
             name: "RFC 2387 Tests",
             dependencies: [
-                "RFC 2387"
+                .target(name: "RFC 2387")
             ]
         ),
     ],
     swiftLanguageModes: [.v6]
 )
-
-extension String {
-    var tests: Self { self + " Tests" }
-    var foundation: Self { self + " Foundation" }
-}
 
 for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
     let ecosystem: [SwiftSetting] = [
